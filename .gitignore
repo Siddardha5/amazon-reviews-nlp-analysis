@@ -136,3 +136,4 @@ data/raw-split/*
 app-assets/reviews_db/chroma-collections.parquet
 app-assets/reviews_db/chroma-embeddings.parquet
 /untitled_project
+temp/reviews-df-final.csv.gz
