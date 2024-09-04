@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import os
 import joblib
-import tensorflow as tf
+# import tensorflow as tf
 from PIL import Image
 import custom_functions as fn
 import plotly.express as px
@@ -27,7 +27,13 @@ fpath_best_ml = FPATHS['results']['best-ml-clf_joblib']
 @st.cache_resource
 def load_best_model_results(fpath_results_joblib):
     import joblib
-    return joblib.load(fpath_results_joblib)
+    
+    loaded = joblib.load(fpath_results_joblib)
+    # if isinstance(loaded, dict):
+    #     keys = list(loaded.keys())
+    #     st.write(str(keys))
+    # else:
+    return loaded#joblib.load(fpath_results_joblib)
 
 ## Loading our training and test data
 @st.cache_data
@@ -110,6 +116,10 @@ explainer = get_explainer(class_names=encoder.classes_)
 
 best_ml_model = FPATHS['models']['ml']['logreg_joblib']
 best_ml_clf = joblib.load(best_ml_model)
+if isinstance(best_ml_clf, dict):
+    # keys = list(best_ml_clf.keys())
+    best_ml_clf= best_ml_clf['model']
+    # st.write(str(keys))
 
 
 
