@@ -165,6 +165,18 @@ with st.spinner("Loading model results..."):
         
         
 # st.subheader("Model Evaluation Results")
+with st.expander("Model Parameters:"):
+    st.write(results['model'].get_params())
+
+with st.expander("Show results for the test data."):
+
+    # if show_test == True: 
+    # y_pred_test = clf_bayes_pipe.predict(X_test)
+    # report_str, conf_mat = classification_metrics_streamlit(y_test, y_pred_test, cmap='Reds',label='Test Data')
+    st.text(results['test']['classification_report'])
+    st.pyplot(results['test']['confusion_matrix'])
+    st.text("\n\n")
+
 with st.expander("Show results for the training data."):
     # st.markdown('> 👈 ***Select the results that are displayed via the sidebar.***')
 
@@ -177,17 +189,6 @@ with st.expander("Show results for the training data."):
     st.pyplot(results['train']['confusion_matrix'])
     st.text("\n\n")
 
-with st.expander("Show results for the test data."):
-
-    # if show_test == True: 
-    # y_pred_test = clf_bayes_pipe.predict(X_test)
-    # report_str, conf_mat = classification_metrics_streamlit(y_test, y_pred_test, cmap='Reds',label='Test Data')
-    st.text(results['test']['classification_report'])
-    st.pyplot(results['test']['confusion_matrix'])
-    st.text("\n\n")
-
-with st.expander("Model Parameters:"):
-    st.write(results['model'].get_params())
 
 # else:
 #     st.empty()
