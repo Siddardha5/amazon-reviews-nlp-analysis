@@ -166,7 +166,7 @@ with st.spinner("Loading model results..."):
         
 # st.subheader("Model Evaluation Results")
 with st.expander("Show results for the training data."):
-    st.markdown('> 👈 ***Select the results that are displayed via the sidebar.***')
+    # st.markdown('> 👈 ***Select the results that are displayed via the sidebar.***')
 
 
     # if show_train == True:
