@@ -24,7 +24,7 @@ with open("config/filepaths.json") as f:
 fpath_best_ml = FPATHS['results']['best-ml-clf_joblib']
 
 
-@st.cache_resource
+# @st.cache_resource
 def load_best_model_results(fpath_results_joblib):
     import joblib
     
