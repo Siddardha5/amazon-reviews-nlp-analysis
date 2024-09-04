@@ -109,7 +109,7 @@ menu_container.markdown("***Select a task or enter your question in the text box
 col1, col2 = menu_container.columns(2)
 button_product_recs = col1.button('Get Product Recommendations')
 button_marketing_recs = col2.button('Get Marketing Recommendations')
-user_text = menu_container.chat_input(placeholder="Type your question here.")
+user_text = menu_container.chat_input(placeholder="What do customers say about the cook time?")
 st.markdown("> ***Reveal the sidebar (`>`) to reset chat history or download chat history as a markdown file.***")
 if button_product_recs:
     prompt_text = '**Product Recommendations:** Provide a list of 3-5 actionable business recommendations on how to improve the product to address review feedback.'
