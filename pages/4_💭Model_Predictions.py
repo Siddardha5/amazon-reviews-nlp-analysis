@@ -168,7 +168,7 @@ with st.spinner("Loading model results..."):
 with st.expander("Model Parameters:"):
     st.write(results['model'].get_params())
 
-with st.expander("Show results for the test data."):
+with st.expander("Show results for the test data.",expanded=True):
 
     # if show_test == True: 
     # y_pred_test = clf_bayes_pipe.predict(X_test)
