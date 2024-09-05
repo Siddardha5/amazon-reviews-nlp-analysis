@@ -66,9 +66,10 @@ with st.expander("Click to Show Product Information",expanded=False):
         col1.markdown(fn.display_metadata(meta_df))
         col2.image(product['Product Image'], width=300)
 
+
+
 # Display summarized low and high reviews
-st.subheader("Review Summaries(🤗HuggingFace)")
-        
+st.subheader("Review Summaries(🤗HuggingFace)")        
 st.markdown('>We leveraged pre-trained summarization models from HuggingFace transformers to summarize all low and all high reviews.')# These summaries will be the contextual information that ChatGPT will use to provide the final conclusions.')
 # st.write("(made with HuggingFace transformers)")
 # col1.image('images/hf-logo.png', width=100)
@@ -76,8 +77,6 @@ with st.expander("🤗Show HuggingFace model details", expanded=False):
     # col1, col2 = st.columns([.3, .7])
     # col2.markdown("##### HuggingFace Model Details")
     st.write(summaries['model-info'])
-
-
 
 # Display low and high reviews summaries
 review_container = st.container()
@@ -90,12 +89,6 @@ col2.markdown("*" + summaries['summary-high'].strip() + "*")
 
 st.divider()
 
-# Load vector database
-if os.path.exists(fpath_db):
-    retriever = fn.load_vector_database(fpath_db, fpath_llm_csv, use_previous=True, as_retriever=True)
-else:
-    retriever = fn.load_vector_database(fpath_db, fpath_llm_csv, use_previous=False, as_retriever=True)
-
 # Set up AI Recommendations section
 st.header("ChatGPT Recommendations / Q&A")
 
@@ -104,13 +97,23 @@ chat_container = st.container(border=True)
 output_container = chat_container.container(border=False)
 menu_container = chat_container.container(border=True)
 
+## Load vector database
+if os.path.exists(fpath_db):
+    retriever = fn.load_vector_database(fpath_db, fpath_llm_csv, use_previous=True, as_retriever=True)
+else:
+    retriever = fn.load_vector_database(fpath_db, fpath_llm_csv, use_previous=False, as_retriever=True)
+
+
+
 # Set up menu options
 menu_container.markdown("***Select a task or enter your question in the text box below to get answers.***")
 col1, col2 = menu_container.columns(2)
 button_product_recs = col1.button('Get Product Recommendations')
 button_marketing_recs = col2.button('Get Marketing Recommendations')
-user_text = menu_container.chat_input(placeholder="Type your question here.")
+user_text = menu_container.chat_input(placeholder="What do customers say about the cook time?")
+
 st.markdown("> ***Reveal the sidebar (`>`) to reset chat history or download chat history as a markdown file.***")
+
 if button_product_recs:
     prompt_text = '**Product Recommendations:** Provide a list of 3-5 actionable business recommendations on how to improve the product to address review feedback.'
 
@@ -132,8 +135,7 @@ def reset_agent(retriever, starter_message="Hello, there! Select one of the opti
 factory = fn.AgentFactory()
 get_agent_kws = dict(template_string_func=lambda: factory.get_template_string_interpret(context_low=summaries['summary-low'], context_high=summaries['summary-high']))
 if 'agent' not in st.session_state:    
-    st.session_state['agent'] = reset_agent(retriever=retriever, get_agent_kws=get_agent_kws)#factory.get_agent(retriever=retriever, template_string_func=lambda: factory.get_template_string_interpret(context_low=summaries['summary-low'], context_high=summaries['summary-high']))
-    
+    st.session_state['agent'] = reset_agent(retriever=retriever, get_agent_kws=get_agent_kws)
 if 'chat-history' not in st.session_state:
     st.session_state['chat-history'] = []
 
@@ -218,7 +220,7 @@ if reset_chat:
 
 # Display chat history and get response    
 with output_container:
-    display_history(st.session_state['agent'].memory.buffer_as_messages,#st.session_state['chat-history'],
+    display_history(st.session_state['agent'].memory.buffer_as_messages,
                     user_avatar=user_avatar, ai_avatar=ai_avatar)
 
     if button_product_recs or button_marketing_recs:
