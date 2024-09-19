@@ -104,13 +104,13 @@ else:
     retriever = fn.load_vector_database(fpath_db, fpath_llm_csv, use_previous=False, as_retriever=True)
 
 
-
 # Set up menu options
 menu_container.markdown("***Select a task or enter your question in the text box below to get answers.***")
 col1, col2 = menu_container.columns(2)
 button_product_recs = col1.button('Get Product Recommendations')
 button_marketing_recs = col2.button('Get Marketing Recommendations')
 user_text = menu_container.chat_input(placeholder="What do customers say about the cook time?")
+
 
 st.markdown("> ***Reveal the sidebar (`>`) to reset chat history or download chat history as a markdown file.***")
 
@@ -122,7 +122,8 @@ if button_marketing_recs:
     
     
 # Reset agent function
-def reset_agent(retriever, starter_message="Hello, there! Select one of the options below or enter your question and I will check the full reviews database to provide you the best answer.", get_agent_kws={}):
+def reset_agent(retriever, starter_message="Hello, there! Select one of the options below or enter your question and I will check the full reviews database to provide you the best answer.", 
+                get_agent_kws={}):
     
     agent_exec = factory.get_agent(retriever=retriever, **get_agent_kws)
 
@@ -141,7 +142,6 @@ if 'chat-history' not in st.session_state:
 
 # Display task options
 task_options = fn.get_task_options(options_only=False)
-
 
 # Display author information
 with open("app-assets/author-info.md") as f:
@@ -224,11 +224,8 @@ with output_container:
                     user_avatar=user_avatar, ai_avatar=ai_avatar)
 
     if button_product_recs or button_marketing_recs:
-
-        response = get_response(prompt_text, agent_key='agent',#'agent-summarize',
-                                # combined_memory=st.session_state['chat-history']
-                                )   
+        response = get_response(prompt_text, agent_key='agent')   
         
     if user_text:
-        response = get_response(user_text, agent_key='agent', combined_memory=None)#st.session_state['chat-history'])
+        response = get_response(user_text, agent_key='agent', combined_memory=None)
 
