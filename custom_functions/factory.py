@@ -197,7 +197,7 @@ class AgentFactory():
         context += f"Use the {context_type} first before using the retrieved documents."
         template_assistant = template_starter + context
         return template_assistant
-
+    
     def get_agent(cls, retriever=None, fpath_db=None, fpath_llm_csv=None, k=8, temperature=0.1, verbose=False, template_string_func=None):
         """
         Gets the agent for NLP analysis.
@@ -214,18 +214,22 @@ class AgentFactory():
         Returns:
         - AgentExecutor: The agent executor object.
         """
+        # Use default template string function if none is provided
         if template_string_func is None:
             template_string_func = cls.get_template_string_reviews
 
+        # Use default vector db file paths if none are provided
         if fpath_db is None:
             fpath_db = cls.FPATHS['data']['app']['vector-db_dir']
 
         if fpath_llm_csv is None:
             fpath_llm_csv = cls.FPATHS['data']['app']['reviews-with-target-for-llm_csv']
 
+        # Load the retriever if none is provided
         if retriever is None:
             retriever = cls.load_vector_database(fpath_db, fpath_llm_csv, k=k, use_previous=True, as_retriever=True)
 
+        # Create a tool for searching reviews
         tool = create_retriever_tool(
             retriever,
             "search_reviews",
@@ -233,24 +237,30 @@ class AgentFactory():
         )        
         cls.tools = [tool]
 
+        # Generate the prompt template using the provided or default template string function
         template = template_string_func()
-
         prompt_template = OpenAIFunctionsAgent.create_prompt(
             system_message=SystemMessage(template),
             extra_prompt_messages=[MessagesPlaceholder(variable_name="history")],
         )
 
+        # Initialize the language model with the specified temperature
         llm = ChatOpenAI(temperature=temperature, api_key=os.getenv("OPENAI_API_KEY"))
         cls.llm = llm
         
+        # Create the agent using the language model and tools
         agent = create_openai_tools_agent(cls.llm, cls.tools, prompt_template)
         cls.agent = agent
         
+        # Create the agent executor with conversation buffer memory
         agent_executor = AgentExecutor(agent=cls.agent, tools=cls.tools, verbose=True, memory=ConversationBufferMemory(memory_key="history", return_messages=True))
         cls.executor = agent_executor
+        
+        # Return the agent executor
         return agent_executor
 
-    def load_vector_database(cls, fpath_db, fpath_csv=None, metadata_columns=['reviewerID'], chunk_size=500, use_previous=False, as_retriever=False, k=8, **retriever_kwargs):
+    def load_vector_database(cls, fpath_db, fpath_csv=None, metadata_columns=['reviewerID'], chunk_size=500, use_previous=False, 
+                             as_retriever=False, k=8, **retriever_kwargs):
         """
         Loads the vector database for retrieval.
 
