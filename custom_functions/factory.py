@@ -245,7 +245,7 @@ class AgentFactory():
         )
 
         # Initialize the language model with the specified temperature
-        llm = ChatOpenAI(temperature=temperature, api_key=os.getenv("OPENAI_API_KEY"))
+        llm = ChatOpenAI(temperature=temperature, model='gpt4o', api_key=os.getenv("OPENAI_API_KEY"))
         cls.llm = llm
         
         # Create the agent using the language model and tools
