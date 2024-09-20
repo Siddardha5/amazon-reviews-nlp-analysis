@@ -180,7 +180,7 @@ class AgentFactory():
         template += qa_prompt_template
         return template
 
-    def get_template_string_interpret(cls, context_low, context_high, context_type='BERT-summary'):
+    def get_template_string_interpret(cls, context_low, context_high, context_type='summaries'):
         """
         Gets the template string for interpreting user questions.
 

@@ -99,9 +99,9 @@ menu_container = chat_container.container(border=True)
 
 ## Load vector database
 if os.path.exists(fpath_db):
-    retriever = fn.load_vector_database(fpath_db, fpath_llm_csv, use_previous=True, as_retriever=True)
+    retriever = fn.load_vector_database(fpath_db, fpath_llm_csv, use_previous=True, as_retriever=True, k=8)
 else:
-    retriever = fn.load_vector_database(fpath_db, fpath_llm_csv, use_previous=False, as_retriever=True)
+    retriever = fn.load_vector_database(fpath_db, fpath_llm_csv, use_previous=False, as_retriever=True, k=8)
 
 
 # Set up menu options
@@ -115,7 +115,7 @@ user_text = menu_container.chat_input(placeholder="What do customers say about t
 st.markdown("> ***Reveal the sidebar (`>`) to reset chat history or download chat history as a markdown file.***")
 
 if button_product_recs:
-    prompt_text = '**Product Recommendations:** Provide a list of 3-5 actionable business recommendations on how to improve the product to address review feedback.'
+    prompt_text = '**Product Recommendations:** Provide a list of 3-5 actionable business recommendations on how to improve the product based on aspects customers did not like from the reviews feedback.'
 
 if button_marketing_recs:
     prompt_text= '**Marketing Recommendations:** Provide a list of 3-5 recommendations for the marketing team to better set customer expectations before purchasing the product or to better target the customers who will enjoy it. Use the reviews as a guide.'
@@ -153,11 +153,21 @@ with st.sidebar.container(border=True):
 
 
 # Function to get response from agent
-def get_response(user_text, agent_key='agent-summarize', combined_memory = None):
+def get_response(user_text, agent_key='agent-summarize', combined_memory = None, 
+                 output_container=output_container):
     
     st.chat_message("user", avatar=user_avatar).write(user_text)
-    response = st.session_state[agent_key].invoke({"input": user_text})
-    st.chat_message('assistant', avatar=ai_avatar).write(fn.fake_streaming(response['output']))
+    
+    ## Previous method
+    # response = st.session_state[agent_key].invoke({"input": user_text})
+    # st.chat_message('assistant', avatar=ai_avatar).write(fn.fake_streaming(response['output']))
+    
+    # Use streamlit callback handler for streaming output
+    st_callback = StreamlitCallbackHandler(output_container)#st.container())
+    response = st.session_state[agent_key].invoke(
+        {"input": user_text}, {"callbacks": [st_callback]}
+    )
+    st.write(response["output"])
     
     if combined_memory is not None:
         combined_memory.append( HumanMessage(user_text))
@@ -224,8 +234,7 @@ with output_container:
                     user_avatar=user_avatar, ai_avatar=ai_avatar)
 
     if button_product_recs or button_marketing_recs:
-        response = get_response(prompt_text, agent_key='agent')   
+        response = get_response(prompt_text, agent_key='agent')
         
     if user_text:
         response = get_response(user_text, agent_key='agent', combined_memory=None)
-
