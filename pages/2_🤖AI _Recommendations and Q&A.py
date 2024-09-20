@@ -118,7 +118,7 @@ if button_product_recs:
     prompt_text = '**Product Recommendations:** Provide a list of 3-5 actionable business recommendations on how to improve the product to address review feedback.'
 
 if button_marketing_recs:
-    prompt_text= '**Marketing Recommendations:** Provide a list of 3-5 recommendations for the marketing team to better set customer expectations before purchasing the product or to better target the customers who will enjoy it.'
+    prompt_text= '**Marketing Recommendations:** Provide a list of 3-5 recommendations for the marketing team to better set customer expectations before purchasing the product or to better target the customers who will enjoy it. Use the reviews as a guide.'
     
     
 # Reset agent function
