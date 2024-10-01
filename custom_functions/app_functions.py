@@ -282,7 +282,7 @@ def load_vector_database(fpath_db, fpath_csv=None, metadata_columns=['reviewerID
         db.save_local(fpath_db)
 
     if as_retriever:
-        return db.as_retriever(k=k, **retriever_kwargs)
+        return db.as_retriever(k=k, search_kwargs = {'k':k}, **retriever_kwargs)
     else:
         return db
     
